@@ -1,6 +1,6 @@
 const { onNew, onDeleted, onUpdated } = require("./events");
 
-const getProcessor = ({newVal, oldVal}) => {
+const getProcessor = ({ newVal, oldVal }) => {
   if (!oldVal && newVal) {
     return onNew;
   } else if (!newVal && oldVal) {
@@ -8,9 +8,9 @@ const getProcessor = ({newVal, oldVal}) => {
   } else if (newVal && oldVal) {
     return onUpdated;
   }
-}
+};
 
-module.exports = ({newVal, oldVal}) => {
-  const x = getProcessor({newVal, oldVal})({newVal, oldVal})
-  return x
-}
+module.exports = ({ newVal, oldVal }) => {
+  const x = getProcessor({ newVal, oldVal })({ newVal, oldVal });
+  return x;
+};
