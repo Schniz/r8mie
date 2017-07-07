@@ -1,5 +1,3 @@
-const mainReducer = require('./mainReducer')
+const mainReducer = require("./mainReducer");
 
-module.exports = mainReducer([
-  require('./reducers/stickyNote'),
-]);
+module.exports = mainReducer([require("./reducers/stickyNote")]);

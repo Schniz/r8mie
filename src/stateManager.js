@@ -1,4 +1,3 @@
-const r = require("rethinkdbdash")();
 const reducers = require("./reducers");
 const { onNew, onDeleted, onUpdated } = require("./state/events");
 const getChangeset = require("./state/getChangeset");
