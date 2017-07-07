@@ -1,6 +1,22 @@
 const { RERUN_ALL, TELEGRAM_BOT_TOKEN } = require("./env");
 const TelegramBot = require("node-telegram-bot-api");
-require("./stateManager")({ rerunAll: RERUN_ALL === "true" });
+require("./stateManager")(RERUN_ALL === "true");
+
+const EMOJI_THUMBSUP = "👍";
+const r = require("rethinkdbdash")();
+const addEvent = ({ type, payload, chatId, userId }) => {
+  return r
+    .db("r8mie")
+    .table("events")
+    .insert({
+      userId,
+      chatId,
+      timestamp: r.now(),
+      payload,
+      type
+    })
+    .run();
+};
 
 const bot = new TelegramBot(TELEGRAM_BOT_TOKEN, { polling: true });
 
@@ -10,15 +26,42 @@ bot.onText(/\/echo (.+)/, (msg, match) => {
 
 bot.onText(/^\/spent (\d+)$/, (msg, match) => {
   const amountSpent = match[1];
-  bot.sendMessage(msg.chat.id, `SPENT ${amountSpent} you fuck`);
+  addEvent({
+    chatId: msg.chat.id,
+    userId: msg.from.id,
+    type: "spent",
+    payload: amountSpent
+  }).then(() => {
+    bot.sendMessage(msg.chat.id, EMOJI_THUMBSUP, {
+      reply_to_message_id: msg.message_id
+    });
+  });
 });
 
 bot.onText(/^\/payback (\d+)/, (msg, match) => {
-  const amountPayback = match[1];
-  bot.sendMessage(msg.chat.id, `PAYED BACK ${amountPayback} you fuck`);
+  const amountSpent = match[1];
+  addEvent({
+    chatId: msg.chat.id,
+    userId: msg.from.id,
+    type: "payback",
+    payload: amountSpent
+  }).then(() => {
+    bot.sendMessage(msg.chat.id, EMOJI_THUMBSUP, {
+      reply_to_message_id: msg.message_id
+    });
+  });
 });
 
 bot.onText(/^\/stickynote (.+)$/, (msg, match) => {
   const stickyNote = match[1];
-  bot.sendMessage(msg.chat.id, `POSTING ${stickyNote} on the wall`);
+  addEvent({
+    chatId: msg.chat.id,
+    userId: msg.from.id,
+    type: "sticky",
+    payload: stickyNote
+  }).then(() => {
+    bot.sendMessage(msg.chat.id, EMOJI_THUMBSUP, {
+      reply_to_message_id: msg.message_id
+    });
+  });
 });
