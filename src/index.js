@@ -1,5 +1,6 @@
-const { TELEGRAM_BOT_TOKEN } = require("./env");
+const { RERUN_ALL, TELEGRAM_BOT_TOKEN } = require("./env");
 const TelegramBot = require("node-telegram-bot-api");
+require("./stateManager")({ rerunAll: RERUN_ALL === "true" });
 
 const bot = new TelegramBot(TELEGRAM_BOT_TOKEN, { polling: true });
 
